@@ -3,10 +3,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-Future<List> getBeers() async {
+Future<List<Beer>> getBeers() async {
   String url = 'https://api.punkapi.com/v2/beers?per_page=5';
   http.Response response = await http.get(url);
-  return json.decode(response.body);
+
+  //try to convert json to dart object
+  List<Beer> allBeers = new List();
+  List<dynamic> beers = json.decode(response.body);
+  for (var beerJson in beers) {
+    var beer = Beer.fromJson(beerJson);
+    allBeers.add(beer);
+  }
+  return allBeers;
 }
 
 void main() async {
@@ -31,6 +39,27 @@ class HelloApp extends StatelessWidget {
           ),
         ),
       )
+    );
+  }
+}
+
+class Beer {
+  final int id;
+  final String name;
+  final imageUrl;
+
+  Beer({this.id, this.name, this.imageUrl});
+
+  @override
+  String toString() {
+    return '\n(id=$id : name=$name)\n';
+  }
+
+  factory Beer.fromJson(Map<String, dynamic> json) {
+    return Beer(
+      id: json['id'],
+      name: json['name'],
+      imageUrl: json['image_url'],
     );
   }
 }

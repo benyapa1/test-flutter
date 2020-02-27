@@ -27,19 +27,48 @@ class HelloApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Hello Flutter'),
-        ),
-        body: Center(
-          child: Text(
-            'Hello Flutter World',
-            textDirection: TextDirection.ltr,
-            style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 32.0),
-          ),
-        ),
-      )
+      home: FirstPage(title: 'My Beers'),
     );
+  }
+}
+
+class FirstPage extends StatelessWidget {
+  final String title;
+  const FirstPage({Key key, this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: FutureBuilder<List<Beer>>(
+          future: getBeers(),
+          builder: (context,result) {
+            if (result.hasError) print(result.error);
+            return result.hasData
+              ? BeerList(beers: result.data)
+              : Center(child: CircularProgressIndicator());
+          }
+        ),
+    );
+  }
+}
+
+class BeerList extends StatelessWidget {
+  final List<Beer> beers;
+  const BeerList({Key key, this.beers}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+        crossAxisCount: 2,
+        children: List.generate(beers.length, (index) {
+          return Center(
+            child: Image.network(beers[index].imageUrl),
+          );
+        }),
+      );
   }
 }
 

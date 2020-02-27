@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 Future<List<Beer>> getBeers() async {
-  String url = 'https://api.punkapi.com/v2/beers?per_page=5';
+  String url = 'https://api.punkapi.com/v2/beers?per_page=10';
   http.Response response = await http.get(url);
 
   //try to convert json to dart object
